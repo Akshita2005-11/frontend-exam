@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Result Card</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+            padding: 30px;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            width: 75%;
+            margin: auto;
+            border-radius: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        .fail {
+            background: #ffcccc;
+            color: red;
+        }
+        #summary {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Class Result Sheet</h2>
+
+    <button onclick="generateResults()">
+        Generate Results
+    </button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody id="result"></tbody>
+    </table>
+
+    <div id="summary"></div>
+</div>
+
+<script>
+const students = [
+    {name: "Aarav", maths: 90, science: 85, english: 80},
+    {name: "Rahul", maths: 70, science: 75, english: 65},
+    {name: "Karthik", maths: 80, science: 32, english: 70},
+    {name: "Meena", maths: 45, science: 60, english: 55},
+    {name: "Priya", maths: 95, science: 90, english: 92}
+];
+
+function getGrade(percent) {
+    if (percent >= 90) return "A+";
+    else if (percent >= 75) return "A";
+    else if (percent >= 60) return "B";
+    else if (percent >= 50) return "C";
+    else return "D";
+}
+
+function generateResults() {
+    let table = "";
+    let totalPercentage = 0;
+    let passed = 0;
+    let topper = students[0];
+    let topPercent = 0;
+
+    students.forEach(s => {
+        let total = s.maths + s.science + s.english;
+        let percent = total / 3;
+        let grade = getGrade(percent);
+
+        let status =
+            s.maths >= 35 &&
+            s.science >= 35 &&
+            s.english >= 35
+            ? "Pass" : "Fail";
+
+        if (status === "Pass") passed++;
+
+        totalPercentage += percent;
+
+        if (percent > topPercent) {
+            topPercent = percent;
+            topper = s;
+        }
+
+        table += `
+            <tr class="${status === 'Fail' ? 'fail' : ''}">
+                <td>${s.name}</td>
+                <td>${total}</td>
+                <td>${percent.toFixed(2)}%</td>
+                <td>${grade}</td>
+                <td>${status}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("result").innerHTML = table;
+
+    let average = totalPercentage / students.length;
+
+    document.getElementById("summary").innerHTML = `
+        <h3>Topper: ${topper.name} (${topPercent.toFixed(2)}%)</h3>
+        <p>Class Average: ${average.toFixed(2)}%</p>
+        <p>Students Passed: ${passed} / ${students.length}</p>
+    `;
+}
+</script>
+
+</body>
+</html>

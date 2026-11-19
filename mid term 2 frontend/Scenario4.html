@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Meter</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 350px;
+            border-radius: 10px;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .bar {
+            height: 8px;
+            background: #ddd;
+            border-radius: 5px;
+            margin: 12px 0;
+        }
+
+        #progress {
+            height: 8px;
+            width: 0%;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        #strength {
+            font-weight: bold;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: grey;
+        }
+
+        .valid {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Password Strength</h2>
+
+    <input type="password" id="password"
+           placeholder="Enter password"
+           oninput="checkStrength()">
+
+    <label>
+        <input type="checkbox" onclick="showPassword()">
+        Show password
+    </label>
+
+    <div class="bar">
+        <div id="progress"></div>
+    </div>
+
+    <p id="strength"></p>
+
+    <ul id="rules">
+        <li>At least 8 characters</li>
+        <li>One uppercase letter</li>
+        <li>One lowercase letter</li>
+        <li>One number</li>
+        <li>One special symbol (@, #, $, !)</li>
+    </ul>
+
+</div>
+
+<script>
+
+function checkStrength() {
+
+    let password = document.getElementById("password").value;
+
+    let checks = [
+        password.length >= 8,
+        /[A-Z]/.test(password),
+        /[a-z]/.test(password),
+        /[0-9]/.test(password),
+        /[^A-Za-z0-9]/.test(password)
+    ];
+
+    let count = checks.filter(Boolean).length;
+
+    let rules = document.querySelectorAll("#rules li");
+
+    rules.forEach((rule, index) => {
+        if (checks[index]) {
+            rule.classList.add("valid");
+            rule.innerHTML = "✓ " + rule.innerHTML;
+        } else {
+            rule.classList.remove("valid");
+            rule.innerHTML = rule.innerHTML.replace("✓ ", "");
+        }
+    });
+
+    let progress = document.getElementById("progress");
+    let strength = document.getElementById("strength");
+
+    progress.style.width = (count * 20) + "%";
+
+    if (password === "") {
+        strength.innerHTML = "";
+        progress.style.width = "0%";
+        progress.style.background = "#ddd";
+    }
+    else if (count <= 2) {
+        strength.innerHTML = "Weak";
+        strength.style.color = "red";
+        progress.style.background = "red";
+    }
+    else if (count <= 4) {
+        strength.innerHTML = "Medium";
+        strength.style.color = "orange";
+        progress.style.background = "orange";
+    }
+    else {
+        strength.innerHTML = "Strong";
+        strength.style.color = "green";
+        progress.style.background = "green";
+    }
+}
+
+function showPassword() {
+
+    let password = document.getElementById("password");
+
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+
+</script>
+
+</body>
+</html>
